@@ -1,3 +1,5 @@
+@use './typography';
+
 *,
 *::before,
 *::after {
@@ -14,4 +16,5 @@ $color-mint-green: #a8e6cf;
 
 body {
   background-color: $color-light-gray;
+  font-family: 'Ubuntu', sans-serif;
 }
