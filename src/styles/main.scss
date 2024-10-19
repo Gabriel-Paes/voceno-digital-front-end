@@ -13,8 +13,11 @@
 $color-light-blue: #4a90e2;
 $color-light-gray: #f5f5f5;
 $color-mint-green: #a8e6cf;
+$color-white: #ffffff;
 
 body {
   background-color: $color-light-gray;
   font-family: 'Ubuntu', sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
