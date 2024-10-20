@@ -1,10 +1,12 @@
 <template>
   <header>
-    <IconLogo color="#fff" width="55" height="55" />
-    <h2 class="ubuntu-medium">voceno.digital</h2>
+    <div class="logo">
+      <IconLogo class="logo__icon" color="#fff" />
+      <h2 class="ubuntu-medium logo__text">voceno.digital</h2>
+    </div>
     <div class="spacer"></div>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
+    <nav class="navbar">
+      <RouterLink to="/" class="link">Home</RouterLink>
     </nav>
   </header>
 
@@ -28,22 +30,46 @@ header {
   height: $header-size;
   display: flex;
   align-items: center;
-  padding: 2rem 4rem;
+  padding: 0 2rem;
 
-  h2 {
-    color: $color-white;
-    font-size: 32px;
-    margin-left: 5px;
-    user-select: none;
-    -webkit-user-drag: none;
+  @include breakpoint('md') {
+    padding: 2rem 4rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+
+    &__text {
+      color: $color-white;
+      font-size: 20px;
+      margin-left: 5px;
+      user-select: none;
+      -webkit-user-drag: none;
+
+      @include breakpoint('sm') {
+        font-size: 32px;
+      }
+    }
+
+    &__icon {
+      width: 45px;
+      height: 45px;
+
+      @include breakpoint('sm') {
+        width: 55px;
+        height: 55px;
+      }
+    }
   }
 
   .spacer {
     margin: auto;
   }
 
-  nav {
-    a {
+  .navbar {
+    .link {
+      display: none;
       background-color: transparent;
       color: $color-white;
       border: thin solid $color-white;
@@ -63,13 +89,21 @@ header {
         outline: none;
         box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
       }
+
+      @include breakpoint('sm') {
+        display: block;
+      }
     }
   }
 }
 
 main {
   /* max-width: 1200px; */
-  margin: 0 6rem;
-  height: calc(100vh - $header-size);
+  padding: 1rem;
+  height: calc(calc(100vh - $header-size) - 1rem);
+
+  @include breakpoint('lg') {
+    margin: 0 6rem;
+  }
 }
 </style>

@@ -10,13 +10,14 @@
     </h3>
     <div class="btn-group">
       <a href="#" class="btn-primary">Comece agora</a>
-      <a href="#" class="btn-secondary">Saiba mais</a>
+      <button href="#" class="btn-secondary" disabled>Saiba mais</button>
     </div>
   </section>
 </template>
 
 <style lang="scss" scoped>
 @use '../styles/main.scss' as *;
+@use 'sass:color';
 
 #hero {
   display: flex;
@@ -27,8 +28,16 @@
   gap: 80px;
   text-align: center;
 
+  @include breakpoint('sm') {
+    height: 100%;
+  }
+
   h1 {
-    font-size: 72px;
+    font-size: 44px;
+
+    @include breakpoint('sm') {
+      font-size: 72px;
+    }
   }
   h3 {
     font-size: 20px;
@@ -54,6 +63,7 @@
   .btn-group {
     display: flex;
     gap: 20px;
+
     .cta-buttons {
       display: flex;
       gap: 20px; /* Espaçamento entre os botões */
@@ -67,29 +77,40 @@
       text-decoration: none; /* Remove o sublinhado */
       font-weight: bold; /* Texto em negrito */
       transition:
-        background-color 0.3s,
-        color 0.3s; /* Transição suave */
+        background-color 0.3s ease,
+        color 0.3s ease,
+        transform 0.3s ease; /* Adicionada transição suave para hover */
       cursor: pointer; /* Indica que é clicável */
     }
 
     .btn-primary {
-      background-color: $color-light-blue; /* Azul para o botão primário */
+      background-color: #4a90e2; /* Azul claro definido */
       color: #ffffff; /* Texto branco */
     }
 
     .btn-primary:hover,
     .btn-primary:focus {
-      background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+      background-color: #357ab7; /* Azul mais claro para hover */
+      transform: translateY(-5px); /* Efeito de elevação ao passar o mouse */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adicionado sombra para destacar o efeito */
     }
 
     .btn-secondary {
-      background-color: #6c757d; /* Cinza para o botão secundário */
-      color: #ffffff; /* Texto branco */
-    }
+      background-color: transparent; /* Fundo transparente para o botão outlined */
+      color: #6c757d; /* Texto em cinza padrão */
+      border: 2px solid #6c757d; /* Borda cinza */
 
-    .btn-secondary:hover,
-    .btn-secondary:focus {
-      background-color: #5a6268; /* Cinza mais escuro ao passar o mouse */
+      &:not(:disabled):hover,
+      &:not(:disabled):focus {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      &:disabled {
+        border-color: color.adjust(#6c757d, $lightness: 20%);
+        color: #ccc;
+        cursor: default;
+      }
     }
   }
 }

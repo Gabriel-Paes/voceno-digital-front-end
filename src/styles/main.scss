@@ -1,4 +1,5 @@
 @use './typography';
+@use 'sass:map';
 
 *,
 *::before,
@@ -20,4 +21,25 @@ body {
   font-family: 'Ubuntu', sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+
+$breakpoints: (
+  'xs': 600px,
+  'sm': 960px,
+  'md': 1280px,
+  'lg': 1920px,
+  'xl': 2560px,
+  'xxl': 2560px,
+);
+
+@mixin breakpoint($breakpoint) {
+  $breakpoint-value: map.get($breakpoints, $breakpoint);
+
+  @if $breakpoint-value {
+    @media (min-width: $breakpoint-value) {
+      @content;
+    }
+  } @else {
+    @warn "O breakpoint #{$size} não foi encontrado no mapa.";
+  }
 }
