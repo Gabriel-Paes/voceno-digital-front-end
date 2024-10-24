@@ -9,11 +9,15 @@
       pronto para compartilhar!
     </h3>
     <div class="btn-group">
-      <a href="#" class="btn-primary">Comece agora</a>
+      <RouterLink to="/new" class="btn-primary">Comece agora</RouterLink>
       <button href="#" class="btn-secondary" disabled>Saiba mais</button>
     </div>
   </section>
 </template>
+
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
 
 <style lang="scss" scoped>
 @use '../styles/main.scss' as *;
@@ -84,13 +88,13 @@
     }
 
     .btn-primary {
-      background-color: #4a90e2; /* Azul claro definido */
-      color: #ffffff; /* Texto branco */
+      background-color: $color-light-blue; /* Azul claro definido */
+      color: $color-white; /* Texto branco */
     }
 
     .btn-primary:hover,
     .btn-primary:focus {
-      background-color: #357ab7; /* Azul mais claro para hover */
+      background-color: color.adjust($color-light-blue, $lightness: -10%);
       transform: translateY(-5px); /* Efeito de elevação ao passar o mouse */
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adicionado sombra para destacar o efeito */
     }
