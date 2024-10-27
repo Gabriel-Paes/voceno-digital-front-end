@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header v-if="!hideNavbar">
     <div class="logo">
       <IconLogo class="logo__icon" color="#fff" />
       <h2 class="ubuntu-medium logo__text">voceno.digital</h2>
@@ -10,14 +10,19 @@
     </nav>
   </header>
 
-  <main>
+  <main :class="{ main: !hideNavbar }">
     <RouterView />
   </main>
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute, RouterLink, RouterView } from 'vue-router'
 import IconLogo from '@/components/icons/IconLogo.vue'
+
+const route = useRoute()
+
+const hideNavbar = computed(() => route.meta.hideNavbar === true)
 </script>
 
 <style lang="scss" scoped>
@@ -30,7 +35,7 @@ header {
   height: $header-size;
   display: flex;
   align-items: center;
-  padding: 0 2rem;
+  padding: 0 0.5rem;
 
   @include breakpoint('md') {
     padding: 2rem 4rem;
@@ -97,8 +102,7 @@ header {
   }
 }
 
-main {
-  /* max-width: 1200px; */
+.main {
   padding: 1rem;
   height: calc(calc(100vh - $header-size) - 1rem);
 

@@ -10,6 +10,12 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/:portfolioName',
+      name: 'portfolio',
+      component: () => import('@/views/PortfolioView.vue'),
+      meta: { hideNavbar: true },
+    },
+    {
       path: '/new',
       name: 'portfolio-new',
       component: () => import('@/views/NewPortfolioView.vue'),

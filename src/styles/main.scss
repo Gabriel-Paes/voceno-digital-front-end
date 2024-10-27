@@ -15,6 +15,7 @@ $color-light-blue: #4a90e2;
 $color-light-gray: #f5f5f5;
 $color-mint-green: #a8e6cf;
 $color-white: #ffffff;
+$color-black: #000000;
 
 body {
   background-color: $color-light-gray;
@@ -31,6 +32,8 @@ $breakpoints: (
   'xl': 2560px,
   'xxl': 2560px,
 );
+
+$gap-size: 16px;
 
 @mixin breakpoint($breakpoint) {
   $breakpoint-value: map.get($breakpoints, $breakpoint);
