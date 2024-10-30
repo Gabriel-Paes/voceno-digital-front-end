@@ -1,25 +1,19 @@
 <template>
-  <TemplateDefault :config="form"></TemplateDefault>
+  <TemplateDefault v-if="formData" :config="formData"></TemplateDefault>
 </template>
 
 <script setup>
 import TemplateDefault from '@/components/templates/TemplateDefault.vue'
+import { ref, onBeforeMount } from 'vue'
 
-import { reactive } from 'vue'
+const formData = ref({})
 
-const form = reactive({
-  name: 'Milano',
-  logo: null,
-  color: '#000000',
-  hero: {
-    backgroundImage: null,
-    highlight: 'Sua presença digital de forma simples e rápida',
-    description:
-      'Desenvolva sua presença digital com um template pronto. Sem códigos, sem complicações - apenas você no digital, pronto para compartilhar!',
-  },
+onBeforeMount(() => {
+  const data = sessionStorage.getItem('formData')
+  if (data) {
+    formData.value = JSON.parse(data)
+  }
 })
-
-document.documentElement.style.setProperty('--primary-color', form.color)
 </script>
 
 <style lang="scss" scoped>

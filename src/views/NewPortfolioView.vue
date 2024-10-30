@@ -51,7 +51,7 @@
             id="heroBackgroundImage"
             name="heroBackgroundImage"
             accept="image/png, image/jpeg"
-            @change="handleFileUpload('heroBackgroundImage', $event)"
+            @change="handleFileUpload('backgroundImage', $event)"
             :class="{ 'error-border': errors.heroBackgroundImage }"
           />
           <span v-if="errors.heroBackgroundImage" class="error">
@@ -69,7 +69,7 @@
             name="heroHighlight"
             placeholder="Digite a frase destaque"
             rows="3"
-            v-model="form.heroHighlight"
+            v-model="form.hero.highlight"
             :class="{ 'error-border': errors.heroHighlight }"
           ></textarea>
           <span v-if="errors.heroHighlight" class="error">
@@ -87,7 +87,7 @@
             name="heroDescription"
             placeholder="Digite a descrição"
             rows="5"
-            v-model="form.heroDescription"
+            v-model="form.hero.description"
             :class="{ 'error-border': errors.heroDescription }"
           ></textarea>
           <span v-if="errors.heroDescription" class="error">
@@ -101,11 +101,18 @@
         </button>
       </form>
     </section>
+    <section class="preview">
+      <TemplateDefault :config="form"></TemplateDefault>
+    </section>
   </div>
 </template>
 
 <script setup>
+import TemplateDefault from '@/components/templates/TemplateDefault.vue'
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const allowedFileTypes = ['image/png', 'image/jpeg']
 
@@ -115,9 +122,11 @@ const form = reactive({
   name: '',
   logo: null,
   color: '#000000',
-  heroBackgroundImage: null,
-  heroHighlight: '',
-  heroDescription: '',
+  hero: {
+    backgroundImage: null,
+    highlight: '',
+    description: '',
+  },
 })
 
 const errors = reactive({})
@@ -126,7 +135,13 @@ const handleFileUpload = (field, event) => {
   const file = event.target.files[0]
   if (file) {
     if (allowedFileTypes.includes(file.type)) {
-      form[field] = file
+      const urlFile = URL.createObjectURL(file)
+
+      if (field === 'backgroundImage') {
+        form.hero.backgroundImage = urlFile
+      } else {
+        form[field] = urlFile
+      }
       errors[field] = ''
     } else {
       errors[field] = 'Por favor, selecione uma imagem válida (PNG ou JPEG).'
@@ -140,10 +155,10 @@ const handleFileUpload = (field, event) => {
 
 const validateForm = () => {
   errors.name = !form.name ? 'O nome é obrigatório' : ''
-  errors.heroHighlight = !form.heroHighlight
+  errors.heroHighlight = !form.hero.highlight
     ? 'A frase de destaque é obrigatória'
     : ''
-  errors.heroDescription = !form.heroDescription
+  errors.heroDescription = !form.hero.description
     ? 'A descrição é obrigatória'
     : ''
 }
@@ -153,12 +168,18 @@ const handleSubmit = async () => {
   if (!Object.values(errors).some(error => error)) {
     isLoading.value = true
     try {
+      sessionStorage.setItem('formData', JSON.stringify(form))
       await new Promise(resolve => setTimeout(resolve, 2000))
-      console.log('Formulário enviado:', form)
+
+      router.push(`/${convertToKebabCase(form.name)}`)
     } finally {
       isLoading.value = false
     }
   }
+}
+
+function convertToKebabCase(str) {
+  return str.toLowerCase().replace(/\s+/g, '-')
 }
 </script>
 
@@ -169,6 +190,7 @@ const handleSubmit = async () => {
 .container {
   display: flex;
   justify-content: flex-start;
+  gap: calc($gap-size * 3);
 }
 
 .card {
@@ -279,6 +301,19 @@ const handleSubmit = async () => {
 @keyframes spin {
   to {
     transform: rotate(1turn);
+  }
+}
+
+.preview {
+  display: none;
+
+  @include breakpoint('md') {
+    display: block;
+    overflow-x: hidden;
+    height: 80vh;
+    border: thin solid #000;
+    box-shadow: -10px 12px 32px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1rem;
   }
 }
 </style>

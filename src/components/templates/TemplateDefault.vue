@@ -1,11 +1,12 @@
 <template>
   <header class="header">
     <div class="logo">
-      <img v-if="config.logo" class="logo__icon" :src="config.logo" />
-      <h2 class="ubuntu-medium logo__text">{{ config.name }}</h2>
+      <img v-if="config?.logo" class="logo__icon" :src="config.logo" />
+      <h2 class="ubuntu-medium logo__text">{{ config?.name }}</h2>
     </div>
     <div class="spacer"></div>
-    <nav class="navbar">
+    <button @click="toggleMenu" class="hamburger">&#9776;</button>
+    <nav class="navbar" :class="{ 'is-open': isMenuOpen }">
       <a href="#hero" class="link">Home</a>
       <a href="#about" class="link">Sobre</a>
       <a href="#services" class="link">Serviços</a>
@@ -13,21 +14,31 @@
     </nav>
   </header>
   <main class="main">
-    <section id="hero" class="hero">
-      <h1 class="highlight ubuntu-medium">
-        {{ config.hero.highlight }}
-      </h1>
-      <h3 class="description">
-        {{ config.hero.description }}
-      </h3>
-      <div class="btn-group">
-        <a href="#about" class="btn-cta">Saiba mais</a>
+    <section
+      id="hero"
+      class="hero"
+      :style="
+        config?.hero?.backgroundImage
+          ? { backgroundImage: `url(${config.hero.backgroundImage})` }
+          : {}
+      "
+    >
+      <div class="hero-content">
+        <h1 class="highlight ubuntu-medium">
+          {{ config?.hero?.highlight }}
+        </h1>
+        <h3 class="description">
+          {{ config?.hero?.description }}
+        </h3>
+        <div class="btn-group">
+          <a href="#about" class="btn-cta">Saiba mais</a>
+        </div>
       </div>
     </section>
     <section id="about" class="about">
       <h2 class="about__title ubuntu-medium">Sobre</h2>
       <p class="about__text">
-        {{ config.name }}, acreditamos que cada projeto é uma oportunidade para
+        {{ config?.name }}, acreditamos que cada projeto é uma oportunidade para
         criar algo extraordinário. Nossa equipe é composta por profissionais
         apaixonados e especializados em diversas áreas, desde estratégia e
         design até tecnologia e execução. Com anos de experiência e uma
@@ -89,8 +100,8 @@
   </main>
   <footer class="footer">
     <span class="text ubuntu-medium">
-      &copy; {{ new Date().getFullYear() }} {{ config.name }}. Todos os direitos
-      reservados. | Desenvolvido por
+      &copy; {{ new Date().getFullYear() }} {{ config?.name }}. Todos os
+      direitos reservados. | Desenvolvido por
       <a
         class="link"
         href="https://www.voceno.digital"
@@ -104,22 +115,35 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch, ref } from 'vue'
 
 const props = defineProps({
   config: Object,
 })
 
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
 onMounted(() => {
-  document.documentElement.style.setProperty(
-    '--primary-color',
-    props.config.color,
-  )
-
-  const contrastColor = getContrastingColor(props.config.color)
-
-  document.body.style.setProperty('--contrast-color', contrastColor)
+  updateColors(props.config.color)
 })
+
+watch(
+  () => props.config.color,
+  newColor => {
+    updateColors(newColor)
+  },
+)
+
+function updateColors(color) {
+  document.documentElement.style.setProperty('--primary-color', color)
+
+  const contrastColor = getContrastingColor(color)
+  document.body.style.setProperty('--contrast-color', contrastColor)
+}
 
 function luminance(hex) {
   const r = parseInt(hex.slice(1, 3), 16) / 255
@@ -161,6 +185,7 @@ html {
   padding: 0 2rem;
   position: sticky;
   top: 0;
+  z-index: 9999;
 
   @include breakpoint('md') {
     padding: 2rem 4rem;
@@ -173,7 +198,8 @@ html {
     &__text {
       color: $contrast-color;
       font-size: 20px;
-      margin-left: 5px;
+      margin-left: 10px;
+      white-space: nowrap;
       user-select: none;
       -webkit-user-drag: none;
 
@@ -183,11 +209,13 @@ html {
     }
 
     &__icon {
-      width: 45px;
       height: 45px;
+      width: 100%;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
 
       @include breakpoint('sm') {
-        width: 55px;
         height: 55px;
       }
     }
@@ -197,9 +225,26 @@ html {
     margin: auto;
   }
 
-  .navbar {
-    .link {
+  .hamburger {
+    display: block;
+    background: transparent;
+    border: none;
+    color: $contrast-color;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+
+    @include breakpoint('sm') {
       display: none;
+    }
+  }
+
+  .navbar {
+    display: none;
+    gap: 5px;
+    padding: 5px;
+    .link {
+      display: block;
       background-color: transparent;
       color: $contrast-color;
       border: thin solid $contrast-color;
@@ -219,13 +264,30 @@ html {
         outline: none;
         box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
       }
+    }
 
-      @include breakpoint('sm') {
-        display: block;
+    &.is-open {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: $primary-color;
+      z-index: 1000;
+
+      .link {
+        text-align: center;
+        border: none;
       }
     }
+
     @include breakpoint('sm') {
       display: flex;
+
+      .link {
+        display: block;
+      }
     }
   }
 }
@@ -240,51 +302,81 @@ html {
   height: calc(100vh - $header-height);
 }
 
+$content-padding: 20px;
+
+.main {
+  padding: 0 $content-padding;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .hero {
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: center;
-  gap: calc($gap-size * 5);
-  padding: 2rem 1rem;
-  @include full-height;
+  align-items: center;
+  padding: 0;
 
-  .highlight {
-    font-size: 44px;
-
-    @include breakpoint('sm') {
-      font-size: 72px;
-    }
+  @include breakpoint('sm') {
+    width: calc(100vw - 9px);
   }
 
-  .description {
-    font-size: 20px;
-    max-width: 560px;
-  }
-
-  .btn-group {
+  .hero-content {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: calc($gap-size * 5);
+    padding: 2rem 1rem;
+    max-width: 1200px;
 
-    .btn-cta {
-      background-color: $primary-color;
-      color: $contrast-color;
-      padding: 15px 25px;
-      border: none;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition:
-        background-color 0.3s ease,
-        color 0.3s ease,
-        transform 0.3s ease;
+    .highlight {
+      font-size: 44px;
 
-      &:hover,
-      &:focus {
-        background-color: color.adjust($color-white, $lightness: -85%);
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      @include breakpoint('sm') {
+        font-size: 72px;
+      }
+    }
+
+    .description {
+      font-size: 20px;
+      max-width: 560px;
+    }
+
+    .btn-group {
+      display: flex;
+
+      .btn-cta {
+        background-color: $primary-color;
+        color: $contrast-color;
+        padding: 15px 25px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease,
+          transform 0.3s ease;
+
+        &:hover,
+        &:focus {
+          color: $color-white;
+          background-color: color.adjust($color-white, $lightness: -85%);
+          transform: translateY(-5px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
       }
     }
   }
@@ -389,7 +481,6 @@ html {
   &__title {
     font-size: 24px;
     margin-bottom: 1rem;
-    color: $primary-color;
 
     @include breakpoint('sm') {
       font-size: 36px;
@@ -405,7 +496,6 @@ html {
   &__item {
     font-size: 1rem;
     line-height: 1.5;
-    color: $primary-color;
   }
 }
 
