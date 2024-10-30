@@ -476,7 +476,11 @@ $content-padding: 20px;
 }
 
 .contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem 1rem;
+  margin-bottom: 3rem;
 
   &__title {
     font-size: 24px;

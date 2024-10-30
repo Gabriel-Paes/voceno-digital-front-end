@@ -1,7 +1,7 @@
 <template>
   <header v-if="!hideNavbar">
     <div class="logo">
-      <IconLogo class="logo__icon" color="#fff" />
+      <IconLogo class="logo__icon" color="#fff" colorCursorBorder="#000" />
       <h2 class="ubuntu-medium logo__text">voceno.digital</h2>
     </div>
     <div class="spacer"></div>
